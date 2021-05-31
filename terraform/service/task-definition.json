@@ -1,0 +1,28 @@
+[
+  {
+    "cpu": 1024,
+    "essential": true,
+    "memory": 985,
+    "image": "${aws_account_id}.dkr.ecr.eu-central-1.amazonaws.com/skyworkz:${docker_tag}",
+    "name": "skyworkz",
+    "portMappings": [
+      {
+        "containerPort": 7000,
+        "hostPort": 7000
+      }
+    ],
+    "environment": [
+      { "name":"AWS_DEFAULT_REGION", "value": "${aws_account_region}"},
+      { "name":  "AWS_ACCOUNT_ID", "value": "${aws_account_id}" },
+      { "name":  "DYNAMODB_TABLE_NAME", "value": "${dynamodb_table_name}" },
+      { "name":  "SQL_USER", "value": "${sql_user}" }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${log_group_name}",
+        "awslogs-region": "${aws_account_region}"
+      }
+    }
+  }
+]

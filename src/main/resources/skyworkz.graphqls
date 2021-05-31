@@ -1,0 +1,192 @@
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Job {
+    id: Int!
+    position: String!
+    description: String!
+    hourlyRate: Float!
+    tags: [Tag]
+    appropriateProfiles: [User]
+    createdBy: User
+    createdAt: String!
+}
+
+type Tag {
+    id: Int!
+    name: String!
+    users: [User]
+    jobs(limit: Int, from: Int): JobResults
+}
+
+type User {
+    id: Int!
+    firstName: String!
+    lastName: String!
+    email: String
+    tags: [Tag]
+    available: Boolean,
+    approved: Boolean,
+    minimumHourlyRate: Float,
+    appropriateJobs(limit: Int, from: Int) : JobResults
+    following: [User]
+    followers: [User]
+    cv: CV
+}
+
+type JobResults {
+    totalSize: Int!
+    data: [Job]
+}
+
+type Query {
+    user(id: Int!): User
+    userByEmail(email: String!): User
+    me: User!
+    users(limit: Int, from: Int) : [User]
+    jobs(limit: Int, from: Int): JobResults
+    jobCount: Int
+    job(id: Int!): Job
+    tags(withJobs: Boolean): [Tag]
+    tag(id: Int!): Tag
+}
+
+
+type Mutation {
+    createJob(job: JobCreation!) : Job!
+    createJobs(jobs: [JobCreation!]): [Job]!
+    createTags(tags: [TagCreation]!) : [Tag]!
+    updateCV(cv: CVCreation!): CV!
+    updateUser(id: Int!, userUpdate: UserUpdate!) : User
+    approveUser(id: Int!) : Boolean
+    subscribeToUser(id: Int!) : Boolean
+    unsubscribeToUser(id: Int!) : Boolean
+    deleteJob(id: Int!) : Boolean
+    deleteProfile(id: Int!) : Boolean
+}
+
+input JobCreation {
+    position: String!
+    description: String!
+    hourlyRate: Float!
+    tags: [TagCreation]
+}
+
+input CVCreation {
+    json: String!
+}
+
+input UserUpdate {
+    firstName: String
+    lastName: String
+    tags: [TagCreation]
+    available: Boolean
+    approved: Boolean
+    minimumHourlyRate: Float
+}
+
+input TagCreation {
+    name: String
+}
+
+type CV {
+    name: String!
+    info: Info
+    contact: Contact!
+    location: Location!
+    employment: Employment!
+    education: Education!
+    skills: Skills!
+    recognition: [Recognition]
+    interests: [Interest]
+    references: [References]
+    language: [Language]
+}
+
+type Info {
+    label: String
+    image: String
+    brief: String
+    quote: String
+}
+
+type Contact{
+    email: String
+    phone: String
+}
+
+type Location {
+    city: String
+    country: String
+    code: String
+    address: String
+}
+
+type Employment{
+    history: [EmploymentDetail]
+}
+
+type EmploymentDetail{
+    position: String,
+    employer: String,
+    summary: String,
+    start: String,
+    end: String,
+    keywords: [String],
+    highlights: [String]
+}
+
+type Education {
+    level: String,
+    degree: String,
+    history: [EducationHistory]
+}
+
+type EducationHistory {
+    institution: String,
+    start: String,
+    end: String,
+    summary: String,
+    area: String,
+    studyType: String,
+    location: String,
+    title: String
+}
+
+type Skills {
+    sets: [Skillset]
+}
+
+type Skillset {
+    name: String,
+    level: String,
+    skills: [String]
+}
+
+type Recognition {
+    title: String,
+    date: String,
+    from: String,
+    summary: String
+}
+
+type Interest {
+    name: String,
+    highlights: [String]
+}
+
+type References {
+    name: String,
+    flavor: String,
+    role: String,
+    type: String
+}
+
+type Language {
+    language: String,
+    fluency: String
+}
+
+

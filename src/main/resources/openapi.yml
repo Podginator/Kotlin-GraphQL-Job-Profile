@@ -1,0 +1,176 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: skyworkzUser
+paths:
+  /health:
+    get:
+      summary: Health Check Endpoint
+      operationId: health
+      tags:
+        - health
+      responses:
+        '200':
+          description: Healthy Response
+        '500':
+          description: Invalid Response
+  /user:
+    get:
+      summary: Get Current User
+      operationId: getUser
+      tags:
+        - users
+      responses:
+        '200':
+          description: The User Details
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Users"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Create a user
+      operationId: createUsers
+      requestBody:
+              description: Optional description in *Markdown*
+              required: true
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/UserCreation'
+      tags:
+        - users
+      responses:
+        '200':
+          description: UserResponse
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /user/authenticate:
+    post:
+      summary: authenticate a user
+      operationId: authenticate
+      requestBody:
+              description: Authenticates a user
+              required: true
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/UserLogin'
+      tags:
+        - users
+      responses:
+        '200':
+          description: UserResponse
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /user/{id}:
+    get:
+      summary: Get a user by Id
+      operationId: getUserId
+      tags:
+        - users
+      responses:
+        '200':
+          description: UserResponse
+        '404':
+          description: UserNotFound
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /user/{email}:
+    get:
+      summary: Get a user by email
+      operationId: getUserEmail
+      tags:
+        - users
+      responses:
+        '200':
+          description: UserResponse
+        '404':
+          description: UserNotFound
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        tag:
+          type: string
+    Users:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
+    UserCreation:
+      type: object
+      required:
+        - FirstName
+        - LastName
+        - Email
+        - Password
+      properties:
+        FirstName:
+          type: string
+        LastName:
+          type: string
+        Email:
+          type: string
+          pattern: (?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])
+        Password:
+          type: string
+          minLength: 6
+    UserLogin:
+      type: object
+      required:
+        - Email
+        - Password
+      properties:
+        Email:
+          type: string
+          pattern: (?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])
+        Password:
+          type: string
+          minLength: 6
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
